@@ -1,0 +1,80 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.5872,
+          45.5037
+        ]
+      },
+      "properties": {
+        "name": "Mount Royal Chalet",
+        "category": "Landmark",
+        "description": "Lookout over downtown at the top of the mountain"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.6144,
+          45.5364
+        ]
+      },
+      "properties": {
+        "name": "Ali",
+        "category": "Food",
+        "description": "Open-air public market in Little Italy"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.5772,
+          45.4794
+        ]
+      },
+      "properties": {
+        "name": "Atwater Market",
+        "category": "Food",
+        "description": "Market hall beside the Lachine Canal"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.569,
+          45.525
+        ]
+      },
+      "properties": {
+        "name": "Parc La Fontaine",
+        "category": "Nature",
+        "description": "Park with two ponds in the Plateau"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.5789,
+          45.4973
+        ]
+      },
+      "properties": {
+        "name": "Concordia Hall Building",
+        "category": "Landmark",
+        "description": "Where GEOG 464 meets"
+      }
+    }
+  ]
+}
