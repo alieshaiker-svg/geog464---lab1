@@ -1,6 +1,6 @@
 # Montreal Playgrounds MVP
 
-Live map: [ADD GITHUB PAGES LINK AFTER PUBLISHING]
+Live map: https://alieshaiker-svg.github.io/464/site/
 
 This project is a small, browser-based map MVP for exploring playground locations in Montreal. It loads a local GeoJSON dataset, displays features categorized as **Aire de jeu - enfant**, and lets users click a playground to see its borough and type.
 
@@ -107,4 +107,20 @@ I used GitHub Copilot in VS Code in the Bring your own agent / Blue lane to help
 
 I used GitHub Copilot in VS Code through GitHub Education. I did not record which specific model was being used.
 
-## Demo
+## A3 feature
+
+My map is designed for parents with young children who want to compare playgrounds in Montréal. The current version lets users select a borough, view playground locations, and see nearby tree-canopy coverage. For A3, I will add a feature that ranks playgrounds within the selected borough using tree-canopy coverage and heat-island exposure. The goal is to help users identify playgrounds with greener and cooler surrounding environments.
+
+### A3 test cases
+
+#### Test 1 — Ranking appears for a borough
+**Action:** Select Saint-Laurent from the borough menu.  
+**Expected result:** A ranked list of Saint-Laurent playgrounds appears. The list is ordered from highest to lowest environmental ranking, and each ranked playground shows its canopy and heat information.
+
+#### Test 2 — Ranking updates when the borough changes
+**Action:** Change the selected borough from Saint-Laurent to another borough.  
+**Expected result:** The ranked list refreshes and contains only playgrounds from the newly selected borough. No Saint-Laurent playgrounds remain in the results.
+
+#### Test 3 — Missing environmental data
+**Action:** A playground is missing either canopy or heat-island information.  
+**Expected result:** The playground does not receive a misleading environmental score. It is clearly marked as having insufficient environmental data, and the page continues working without an error.
