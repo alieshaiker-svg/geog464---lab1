@@ -124,3 +124,14 @@ My map is designed for parents with young children who want to compare playgroun
 #### Test 3 — Missing canopy data
 **Action:** A playground has a null, missing, or non-numeric `canopy_pct_250m` value.
 **Expected result:** It is excluded from the ranking, and the map and remaining rankings continue working without an error.
+
+### A3 test results
+
+#### Test 1 — Ranking appears for a borough
+**Result:** PASS — Tested on November 3, 2026. Selecting Saint-Laurent displayed a Top 10 ranking of Saint-Laurent playgrounds ordered from highest to lowest `canopy_pct_250m`. The visible ranking began at 42.5% and decreased from there.
+
+#### Test 2 — Ranking updates when the borough changes
+**Result:** PASS — Tested on November 3, 2026. Changing the borough from Saint-Laurent to Anjou refreshed both the playground count and the ranking. The Anjou ranking showed only Anjou playgrounds and was ordered from highest to lowest canopy percentage.
+
+#### Test 3 — Missing canopy data
+**Result:** PASS — Programmatically verified on November 3, 2026 using test data. Missing, null, and non-numeric canopy values were excluded from the ranking rather than treated as zero, and the page continued working without a JavaScript error.
