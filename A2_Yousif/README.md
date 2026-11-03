@@ -109,18 +109,18 @@ I used GitHub Copilot in VS Code through GitHub Education. I did not record whic
 
 ## A3 feature
 
-My map is designed for parents with young children who want to compare playgrounds in Montréal. The current version lets users select a borough, view playground locations, and see nearby tree-canopy coverage. For A3, I will add a feature that ranks playgrounds within the selected borough using tree-canopy coverage and heat-island exposure. The goal is to help users identify playgrounds with greener and cooler surrounding environments.
+My map is designed for parents with young children who want to compare playgrounds in Montréal. The current version lets users select a borough, view playground locations, and see nearby tree-canopy coverage. For A3, the ranking panel orders playgrounds in the selected borough by `canopy_pct_250m`, from highest to lowest, and shows the canopy percentage rounded to one decimal place. Only playgrounds with numeric canopy data are ranked, and the panel shows at most the top 10.
 
 ### A3 test cases
 
 #### Test 1 — Ranking appears for a borough
-**Action:** Select Saint-Laurent from the borough menu.  
-**Expected result:** A ranked list of Saint-Laurent playgrounds appears. The list is ordered from highest to lowest environmental ranking, and each ranked playground shows its canopy and heat information.
+**Action:** Select Saint-Laurent from the borough menu.
+**Expected result:** A list titled “Greenest playground surroundings” appears, ordered from highest to lowest `canopy_pct_250m`. It contains no more than 10 playgrounds and shows each actual canopy percentage to one decimal place.
 
 #### Test 2 — Ranking updates when the borough changes
-**Action:** Change the selected borough from Saint-Laurent to another borough.  
-**Expected result:** The ranked list refreshes and contains only playgrounds from the newly selected borough. No Saint-Laurent playgrounds remain in the results.
+**Action:** Change the selected borough from Saint-Laurent to another borough.
+**Expected result:** The list refreshes using only playgrounds in the newly selected borough, sorted by `canopy_pct_250m`; no playgrounds from the previous borough remain.
 
-#### Test 3 — Missing environmental data
-**Action:** A playground is missing either canopy or heat-island information.  
-**Expected result:** The playground does not receive a misleading environmental score. It is clearly marked as having insufficient environmental data, and the page continues working without an error.
+#### Test 3 — Missing canopy data
+**Action:** A playground has a null, missing, or non-numeric `canopy_pct_250m` value.
+**Expected result:** It is excluded from the ranking, and the map and remaining rankings continue working without an error.
