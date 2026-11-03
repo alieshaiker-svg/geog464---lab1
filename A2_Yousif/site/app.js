@@ -8,6 +8,96 @@ const streets = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const PLAYGROUND_TYPE = 'Aire de jeu - enfant';
 const status = document.getElementById('status');
 const boroughFilter = document.getElementById('borough-filter');
+const rankingList = document.getElementById('ranking-list');
+const rankingSummary = document.getElementById('ranking-summary');
+
+function readStringProperty(properties, keys) {
+  if (!properties) {
+    return 'Unnamed playground';
+  }
+
+  for (let i = 0; i < keys.length; i += 1) {
+    const value = properties[keys[i]];
+    if (value !== null && value !== undefined && value !== '') {
+      return String(value);
+    }
+  }
+
+  return 'Unnamed playground';
+}
+
+function getCanopyPercent(feature) {
+  const properties = feature && feature.properties ? feature.properties : {};
+  const canopy = properties.canopy_pct_250m;
+  return typeof canopy === 'number' && Number.isFinite(canopy) ? canopy : null;
+}
+
+function renderRankingList(visiblePlaygrounds) {
+  rankingList.innerHTML = '';
+
+  if (!visiblePlaygrounds.length) {
+    rankingSummary.textContent = 'No playgrounds match this borough.';
+    return;
+  }
+
+  const rankedPlaygrounds = visiblePlaygrounds
+    .map(function (feature) {
+      const properties = feature.properties || {};
+      const canopy = getCanopyPercent(feature);
+      return {
+        name: readStringProperty(properties, ['NOM', 'NAME', 'name', 'playground_name']),
+        identifier: properties.ID || properties.INDEX_PARC || '',
+        canopy: canopy
+      };
+    })
+    .filter(function (playground) {
+      return playground.canopy !== null;
+    })
+    .sort(function (a, b) {
+      return b.canopy - a.canopy;
+    })
+    .slice(0, 10);
+
+  if (!rankedPlaygrounds.length) {
+    rankingSummary.textContent = 'No playgrounds with numeric canopy data in this borough.';
+    return;
+  }
+
+  rankingSummary.textContent =
+    'Top playgrounds ranked by tree canopy within 250 m. Showing ' +
+    rankedPlaygrounds.length + ' of ' +
+    visiblePlaygrounds.filter(function (feature) {
+      return getCanopyPercent(feature) !== null;
+    }).length + '.';
+
+  const nameCounts = new Map();
+  rankedPlaygrounds.forEach(function (playground) {
+    nameCounts.set(playground.name, (nameCounts.get(playground.name) || 0) + 1);
+  });
+
+  rankedPlaygrounds.forEach(function (playground) {
+    const item = document.createElement('li');
+
+    const name = document.createElement('strong');
+    name.textContent = playground.name;
+
+    item.appendChild(name);
+
+    if (nameCounts.get(playground.name) > 1 && playground.identifier) {
+      const identifier = document.createElement('span');
+      identifier.className = 'rank-identifier';
+      identifier.textContent = 'ID ' + String(playground.identifier);
+      item.appendChild(identifier);
+    }
+
+    const meta = document.createElement('span');
+    meta.className = 'rank-meta';
+    meta.textContent = 'Tree canopy within 250 m: ' + playground.canopy.toFixed(1) + '%';
+
+    item.appendChild(meta);
+    rankingList.appendChild(item);
+  });
+}
 
 function loadGeoJSON(path) {
   return fetch(path).then(function (response) {
@@ -41,13 +131,8 @@ Promise.all([
     const playgrounds = playgroundData.features.filter(function (feature) {
       return feature.properties && feature.properties.TYPE === PLAYGROUND_TYPE;
     });
-    const canopyValues = playgrounds.map(function (feature) {
-      return Number(feature.properties.canopy_pct_250m);
-    });
-    if (playgrounds.length !== 1008 || canopyValues.some(function (value) {
-      return !Number.isFinite(value) || value < 0 || value > 100;
-    })) {
-      throw new Error('playgrounds_canopy.geojson must contain 1,008 valid canopy percentages');
+    if (playgrounds.length !== 1008) {
+      throw new Error('playgrounds_canopy.geojson must contain 1,008 playgrounds');
     }
     const boroughs = Array.from(new Set(playgrounds.map(function (feature) {
       return feature.properties.ARROND;
@@ -84,22 +169,24 @@ Promise.all([
 
     const playgroundLayer = L.geoJSON([], {
       pointToLayer: function (feature, latlng) {
+        const canopy = getCanopyPercent(feature);
         return L.circleMarker(latlng, {
           radius: 5,
           color: '#ffffff',
           weight: 1,
           fillOpacity: 0.95,
-          fillColor: colourForCanopy(feature.properties.canopy_pct_250m)
+          fillColor: canopy === null ? '#777777' : colourForCanopy(canopy)
         });
       },
       onEachFeature: function (feature, layer) {
         const p = feature.properties;
+        const canopy = getCanopyPercent(feature);
         const popup = document.createElement('div');
 
         [
           ['Borough', p.ARROND],
           ['Type', p.TYPE],
-          ['Tree canopy within 250 m', Number(p.canopy_pct_250m).toFixed(1) + '%']
+          ['Tree canopy within 250 m', canopy === null ? 'Not recorded' : canopy.toFixed(1) + '%']
         ].forEach(function (item) {
           const line = document.createElement('div');
           line.textContent = item[0] + ': ' + (item[1] || 'Not recorded');
@@ -153,6 +240,7 @@ Promise.all([
       status.textContent = selectedBorough
         ? visiblePlaygrounds.length + ' playgrounds shown in ' + selectedBorough
         : visiblePlaygrounds.length + ' playgrounds shown across Montreal';
+      renderRankingList(visiblePlaygrounds);
 
       if (visiblePlaygrounds.length > 0) {
         map.fitBounds(playgroundLayer.getBounds(), { padding: [20, 20] });

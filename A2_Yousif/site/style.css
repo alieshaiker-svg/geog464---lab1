@@ -1,13 +1,39 @@
 /* PRESENTATION: how the page looks. */
 body { margin: 0; font-family: Arial, Helvetica, sans-serif; height: 100vh; display: flex; flex-direction: column; }
-header { padding: 10px 16px; background: #1F2D5A; color: #fff; }
-header h1 { margin: 0; font-size: 20px; }
-header p { margin: 4px 0 0; font-size: 14px; color: #DCBD23; }
-#borough-filter { margin: 4px 0 0 4px; }
-header .source { font-size: 11px; }
+header { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px 24px; padding: 14px 20px; background: #1F2D5A; color: #fff; }
+.header-intro h1 { margin: 0; font-size: 22px; }
+.header-intro p { margin: 5px 0 0; font-size: 14px; line-height: 1.4; color: #e3ebf7; }
+.header-controls { display: flex; align-items: center; gap: 14px; }
+.borough-control { display: flex; align-items: center; gap: 8px; }
+.borough-control label { font-size: 13px; font-weight: 700; color: #f3f6fb; }
+#borough-filter { min-height: 36px; min-width: 180px; padding: 6px 30px 6px 10px; border: 1px solid #c7d2e2; border-radius: 5px; background: #fff; color: #1b2942; font: inherit; }
+#borough-filter:focus-visible { outline: 3px solid #a9d8ff; outline-offset: 2px; }
+#status { margin: 0; padding: 8px 11px; border: 1px solid rgba(255, 255, 255, 0.32); border-radius: 5px; color: #fff; font-size: 13px; line-height: 1.35; }
+header .source { grid-column: 1 / -1; margin: 0; font-size: 11px; color: #d3ddec; }
+#content { display: flex; flex: 1; min-height: 0; }
 #map { flex: 1; min-height: 0; }
+#ranking-panel { width: 320px; max-width: 32vw; background: #f7f9fb; border-left: 1px solid #d8dee8; padding: 14px 16px; overflow: auto; }
+#ranking-panel h2 { margin: 0 0 8px; font-size: 18px; color: #1F2D5A; }
+#ranking-summary { margin: 0 0 10px; font-size: 13px; color: #304a5d; }
+#ranking-list { margin: 0; padding-left: 18px; }
+#ranking-list li { margin-bottom: 10px; padding: 8px 10px 8px 6px; background: #fff; border: 1px solid #dfe7ef; border-radius: 6px; }
+#ranking-list li::marker { color: #0d5c52; font-weight: 700; }
+#ranking-list strong { display: block; margin-bottom: 4px; }
+#ranking-list .rank-identifier { display: block; margin-bottom: 4px; color: #536579; font-size: 12px; }
+#ranking-list .rank-meta { display: block; font-size: 12px; color: #3b4b5b; }
 .legend { background: #fff; padding: 8px 10px; border-radius: 6px; line-height: 1.5; font-size: 13px; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35); }
 .legend-title { font-weight: 700; margin-bottom: 3px; }
 .legend-note { font-size: 11px; line-height: 1.3; margin-bottom: 3px; }
 .legend-row { white-space: nowrap; }
 .legend-swatch { display: inline-block; width: 16px; height: 12px; margin-right: 7px; border: 1px solid #777; vertical-align: -2px; }
+
+@media (max-width: 760px) {
+  header { grid-template-columns: 1fr; gap: 10px; padding: 12px 14px; }
+  .header-controls { align-items: stretch; flex-wrap: wrap; gap: 8px 12px; }
+  .borough-control { flex: 1 1 220px; }
+  #borough-filter { flex: 1; min-width: 0; }
+  #status { flex: 1 1 100%; }
+  #content { flex-direction: column; }
+  #map { flex: 1 1 55%; min-height: 220px; }
+  #ranking-panel { width: auto; max-width: none; max-height: 36vh; border-left: 0; border-top: 1px solid #d8dee8; }
+}
