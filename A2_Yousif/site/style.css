@@ -28,12 +28,16 @@ header .source { grid-column: 1 / -1; margin: 0; font-size: 11px; color: #d3ddec
 .legend-swatch { display: inline-block; width: 16px; height: 12px; margin-right: 7px; border: 1px solid #777; vertical-align: -2px; }
 
 @media (max-width: 760px) {
+  body { height: auto; min-height: 100vh; }
   header { grid-template-columns: 1fr; gap: 10px; padding: 12px 14px; }
+  .header-intro, .header-controls, .borough-control, #content, #map, #ranking-panel { min-width: 0; }
+  .header-intro h1, .header-intro p, header .source, #ranking-panel h2,
+  #ranking-summary, #ranking-list li { overflow-wrap: anywhere; }
   .header-controls { align-items: stretch; flex-wrap: wrap; gap: 8px 12px; }
-  .borough-control { flex: 1 1 220px; }
-  #borough-filter { flex: 1; min-width: 0; }
-  #status { flex: 1 1 100%; }
-  #content { flex-direction: column; }
-  #map { flex: 1 1 55%; min-height: 220px; }
-  #ranking-panel { width: auto; max-width: none; max-height: 36vh; border-left: 0; border-top: 1px solid #d8dee8; }
+  .borough-control { flex: 1 1 220px; max-width: 100%; }
+  #borough-filter { box-sizing: border-box; flex: 1; min-width: 0; }
+  #status { box-sizing: border-box; flex: 1 1 100%; }
+  #content { flex: 1 0 auto; flex-direction: column; width: 100%; }
+  #map { flex: 0 0 45vh; width: 100%; min-height: 240px; }
+  #ranking-panel { box-sizing: border-box; width: 100%; max-width: none; max-height: 36vh; border-left: 0; border-top: 1px solid #d8dee8; }
 }

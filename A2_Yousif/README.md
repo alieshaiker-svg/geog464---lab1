@@ -1,8 +1,29 @@
 # Montreal Playgrounds MVP
 
 Live map: https://alieshaiker-svg.github.io/464/site/
+https://alieshaiker-svg.github.io/geog464---lab1/A2_Yousif/site/ 
 
 This project is a small, browser-based map MVP for exploring playground locations in Montreal. It loads a local GeoJSON dataset, displays features categorized as **Aire de jeu - enfant**, and lets users click a playground to see its borough and type.
+
+## Pre-flight report (Lab 7)
+
+| Check | Result | What I did |
+| --- | --- | --- |
+| 1. Cold start | Fault: missing favicon returned a 404 error | Opened the live GitHub Pages site in an Incognito window, opened the Console, and reloaded with Ctrl+Shift+R. The map loaded correctly, but the browser reported a missing `favicon.ico`. |
+
+| 2. Read every label | PASS | Checked the header, ranking panel, legend, popups, and other visible text for `undefined`, `null`, `NaN`, or `[object Object]`. |
+
+| 3. Ask twice | PASS | Changed the selected borough more than once and checked that the playground count and ranking updated correctly. |
+
+| 4. The edge | PASS | Tested an edge case and checked that the page responded clearly without leaving an incorrect old result or producing an error. |
+
+| 5. The data does not come | PASS | Blocked one of the GeoJSON requests, refreshed, its gone or data couldnt load, then unblocked it, refreshed and it came back. |
+
+| 6. On a phone | FAULT: Tested the live site on my phone. The page works, but some header, control, and ranking content extends beyond the screen and is clipped horizontally. So I pressed CTRL+SHIFT+M to change the dimension that suits a iphone 16 and then used copilot to help write a block of code to create the dimensions I want. |
+
+| 7. Mouse in my pocket | PASS | Used Tab, Enter, and Space without the mouse to check whether the page controls could be reached and used from the keyboard. |
+
+| 8. Accessibility audit | PASS | With a minor accesbility issue report of "Document does not have a main landmark, otherwise the score was a 98. |
 
 ## Source and licence
 
