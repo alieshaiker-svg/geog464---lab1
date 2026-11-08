@@ -9,7 +9,7 @@ This project is a small, browser-based map MVP for exploring playground location
 
 | Check | Result | What I did |
 | --- | --- | --- |
-| 1. Cold start | Fault: missing favicon returned a 404 error | Opened the live GitHub Pages site in an Incognito window, opened the Console, and reloaded with Ctrl+Shift+R. The map loaded correctly, but the browser reported a missing `favicon.ico`. |
+| 1. Cold start | PASS: The map loaded correctly, with no fautls after the refresh.
 
 | 2. Read every label | PASS | Checked the header, ranking panel, legend, popups, and other visible text for `undefined`, `null`, `NaN`, or `[object Object]`. |
 
