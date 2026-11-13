@@ -62,13 +62,17 @@ I understand how the filtering, sorting, and Top 10 selection work. I am still l
 
 **Severity:** 2 — this slowed users down because they could identify which playground ranked highest in the list but could not easily identify its corresponding location on the map.
 
-**My change:** Make each Top 10 ranking item interactive so selecting it moves the map to that playground, highlights the corresponding marker, and opens its popup with the matching playground ID.
+**My change:** I made each Top 10 ranking item interactive so selecting it moves the map to that playground, highlights the corresponding marker, and opens its popup with the matching playground ID.
 
 **Recheck:** Give the same greener-surroundings task to someone new using the live site without helping them. Fixed means they can use the ranking and identify the corresponding playground on the map without hesitating at this point.
 
-**Before:** `A3_Yousif_screenshot_before.png` 
+**Before:** `screenshots/before.png`
 
-**After:** `A3_Yousif_screenshot_bafter.png`
+**After:** `screenshots/after.png`
+
+**The one fix I made:** I made the Top 10 ranking items interactive so selecting a ranked playground moves the map to that playground, highlights the matching marker, and opens its popup with the same playground ID.
+
+**Recheck result:** A new tester used the live site and was able to select the highest-ranked playground and identify its corresponding location on the map without help. The fix worked.
 
 
 ### Lab 5 method

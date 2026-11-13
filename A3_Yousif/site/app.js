@@ -32,8 +32,14 @@ function getCanopyPercent(feature) {
   return typeof canopy === 'number' && Number.isFinite(canopy) ? canopy : null;
 }
 
-function renderRankingList(visiblePlaygrounds) {
+function getPlaygroundId(feature) {
+  const properties = feature && feature.properties ? feature.properties : {};
+  return properties.ID || properties.INDEX_PARC || '';
+}
+
+function renderRankingList(visiblePlaygrounds, playgroundLayer, map) {
   rankingList.innerHTML = '';
+  let highlightedMarker = null;
 
   if (!visiblePlaygrounds.length) {
     rankingSummary.textContent = 'No playgrounds match this borough.';
@@ -46,8 +52,9 @@ function renderRankingList(visiblePlaygrounds) {
       const canopy = getCanopyPercent(feature);
       return {
         name: readStringProperty(properties, ['NOM', 'NAME', 'name', 'playground_name']),
-        identifier: properties.ID || properties.INDEX_PARC || '',
-        canopy: canopy
+        identifier: getPlaygroundId(feature),
+        canopy: canopy,
+        feature: feature
       };
     })
     .filter(function (playground) {
@@ -70,31 +77,66 @@ function renderRankingList(visiblePlaygrounds) {
       return getCanopyPercent(feature) !== null;
     }).length + '.';
 
-  const nameCounts = new Map();
-  rankedPlaygrounds.forEach(function (playground) {
-    nameCounts.set(playground.name, (nameCounts.get(playground.name) || 0) + 1);
-  });
-
   rankedPlaygrounds.forEach(function (playground) {
     const item = document.createElement('li');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'rank-select';
+    button.addEventListener('click', function () {
+      let marker = null;
+      playgroundLayer.eachLayer(function (layer) {
+        if (layer.feature === playground.feature) {
+          marker = layer;
+        }
+      });
+
+      if (!marker) {
+        console.error('Could not find the selected playground marker on the map.');
+        return;
+      }
+
+      if (highlightedMarker) {
+        const previousCanopy = getCanopyPercent(highlightedMarker.feature);
+        highlightedMarker.setStyle({
+          radius: 5,
+          color: '#ffffff',
+          weight: 1,
+          fillOpacity: 0.95,
+          fillColor: previousCanopy === null ? '#777777' : colourForCanopy(previousCanopy)
+        });
+      }
+
+      marker.setStyle({
+        radius: 9,
+        color: '#1F2D5A',
+        weight: 3,
+        fillColor: '#ffffff',
+        fillOpacity: 1
+      });
+      marker.bringToFront();
+      map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 16));
+      marker.openPopup();
+      highlightedMarker = marker;
+    });
 
     const name = document.createElement('strong');
     name.textContent = playground.name;
 
-    item.appendChild(name);
+    button.appendChild(name);
 
-    if (nameCounts.get(playground.name) > 1 && playground.identifier) {
+    if (playground.identifier) {
       const identifier = document.createElement('span');
       identifier.className = 'rank-identifier';
       identifier.textContent = 'ID ' + String(playground.identifier);
-      item.appendChild(identifier);
+      button.appendChild(identifier);
     }
 
     const meta = document.createElement('span');
     meta.className = 'rank-meta';
     meta.textContent = 'Tree canopy within 250 m: ' + playground.canopy.toFixed(1) + '%';
 
-    item.appendChild(meta);
+    button.appendChild(meta);
+    item.appendChild(button);
     rankingList.appendChild(item);
   });
 }
@@ -184,6 +226,7 @@ Promise.all([
         const popup = document.createElement('div');
 
         [
+          ['Playground ID', getPlaygroundId(feature) || 'Not recorded'],
           ['Borough', p.ARROND],
           ['Type', p.TYPE],
           ['Tree canopy within 250 m', canopy === null ? 'Not recorded' : canopy.toFixed(1) + '%']
@@ -240,7 +283,7 @@ Promise.all([
       status.textContent = selectedBorough
         ? visiblePlaygrounds.length + ' playgrounds shown in ' + selectedBorough
         : visiblePlaygrounds.length + ' playgrounds shown across Montreal';
-      renderRankingList(visiblePlaygrounds);
+      renderRankingList(visiblePlaygrounds, playgroundLayer, map);
 
       if (visiblePlaygrounds.length > 0) {
         map.fitBounds(playgroundLayer.getBounds(), { padding: [20, 20] });
