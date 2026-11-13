@@ -56,6 +56,21 @@ I understand how the filtering, sorting, and Top 10 selection work. I am still l
 | 8. Accessibility audit | PASS — minor issue noted | Ran Lighthouse Accessibility in mobile mode. The site scored 98/100. Lighthouse reported one issue: "Document does not have a main landmark." |
 
 
+## Part 3: what I found, and one fix
+
+**Evidence:** During usability testing, one tester tried clicking ranked playgrounds but nothing happened. Another tester used the greener canopy squares around playground markers instead of clearly connecting the Top 10 ranking to a specific playground on the map.
+
+**Severity:** 2 — this slowed users down because they could identify which playground ranked highest in the list but could not easily identify its corresponding location on the map.
+
+**My change:** Make each Top 10 ranking item interactive so selecting it moves the map to that playground, highlights the corresponding marker, and opens its popup with the matching playground ID.
+
+**Recheck:** Give the same greener-surroundings task to someone new using the live site without helping them. Fixed means they can use the ranking and identify the corresponding playground on the map without hesitating at this point.
+
+**Before:** `A3_Yousif_screenshot_before.png` 
+
+**After:** `A3_Yousif_screenshot_bafter.png`
+
+
 ### Lab 5 method
 
 The canopy dataset is the environmental second dataset, used to add context while keeping playgrounds as the main subject. The Canopée source coordinates and metadata indicate that the data is in EPSG:2950, so it was interpreted in that CRS for area calculations. Ten invalid geometries were repaired in memory only; the source file itself was not modified.
