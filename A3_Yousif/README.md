@@ -9,12 +9,13 @@ My map is designed for parents with young children who want to compare playgroun
 
 ## A3 feature explanation
 
-The main A3 ranking feature is implemented in `site/app.js`, especially lines 29–32, 35–100, and 232–254. Lines 29–32 read and validate each playground's `canopy_pct_250m` value. Lines 35–100 create the ranking panel. Within that section, lines 53–59 remove playgrounds without valid canopy data, sort the remaining playgrounds from highest to lowest canopy coverage, and keep only the Top 10.
+The main A3 ranking feature is implemented in `site/app.js`. Lines 29–32 read and validate each playground's `canopy_pct_250m` value. Lines 40–142 build the ranking panel. Within that section, lines 49–66 remove playgrounds without valid canopy data, sort the remaining playgrounds from highest to lowest canopy coverage, and keep only the Top 10.
 
-Lines 232–254 handle the borough interaction. When the user changes the borough, the code filters the playgrounds to the selected borough and then calls the ranking function again so the list updates using only those playgrounds.
+For the Part 3 usability fix, lines 80–120 make each ranked playground interactive. When a ranking item is selected, the code finds its matching Leaflet marker, highlights it, moves the map to that location, and opens its popup. Lines 228–239 add the same playground ID to the popup so it can be matched to the ranking.
 
-I understand how the filtering, sorting, and Top 10 selection work. I am still less confident about how the JavaScript updates the Leaflet map layers and the ranking panel together when the borough changes.
+Lines 275–297 handle the borough interaction. When the borough changes, the playgrounds are filtered to that borough and the ranking is rebuilt using the filtered features.
 
+I understand how the filtering, sorting, Top 10 selection, and ranking-to-marker interaction work. I am still less confident about how Leaflet manages the GeoJSON feature objects and their corresponding marker layers internally.
 
 ### A3 test cases (Lab 6)
 
@@ -126,6 +127,9 @@ A3_Yousif/
 │   ├── A2_pipeline.ipynb
 │   ├── lab5_playground_grid.ipynb
 │   └── lab5_canopy_analysis.ipynb
+├── screenshots/
+│   ├── before.png
+│   └── after.png
 ├── site/
 │   ├── app.js
 │   ├── index.html
@@ -155,3 +159,5 @@ For A3, I asked Copilot to help add a ranking panel that compares playgrounds in
 I also used Copilot to help improve the mobile responsive layout after testing showed that some headings, controls, and ranking content were clipped on a phone. I reviewed the suggested CSS changes and tested the updated site again on a mobile-sized browser view and on my phone.
 
 I reviewed and tested the code rather than accepting the generated changes without checking them. I ran the three A3 test cases, including the missing-canopy edge case, and completed the Lab 7 pre-flight checks on the live GitHub Pages site. The project idea, intended audience, decision to rank playgrounds using tree canopy only, A3 test cases, usability-test plan, and final project decisions remained my own.
+
+For Part 3, I gave Copilot the usability-testing evidence that users could see the ranking but had difficulty connecting a ranked item to its map marker. I asked it to make the smallest focused change without altering the ranking calculation. Copilot made the ranking items interactive, added matching IDs to the popups, and added subtle hover/focus styling. I tested the result by clicking different ranked items, using Tab, Enter and Space, checking the matching ID and highlighted marker, and rechecking the live site with another user.
