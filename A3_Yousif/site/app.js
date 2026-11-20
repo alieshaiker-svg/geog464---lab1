@@ -292,9 +292,37 @@ Promise.all([
       }
     }
 
+    function showPlayground(feature) {
+      const id = String(feature.properties.ID);
+      boroughFilter.value = feature.properties.ARROND || '';
+      updateMap();
+
+      let marker = null;
+      playgroundLayer.eachLayer(function (layer) {
+        const properties = layer.feature && layer.feature.properties;
+        if (properties && String(properties.ID) === id) {
+          marker = layer;
+        }
+      });
+
+      if (!marker) {
+        console.error('Could not find the saved playground marker on the map.');
+        return;
+      }
+
+      map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 15));
+      marker.openPopup();
+    }
+
     boroughFilter.disabled = false;
     boroughFilter.addEventListener('change', updateMap);
     updateMap();
+    rememberMarks(map, playgroundLayer, {
+      idField: 'ID',
+      nameField: 'ID',
+      title: 'My playgrounds',
+      onSelect: showPlayground
+    });
   })
   .catch(function (err) {
     status.textContent =
