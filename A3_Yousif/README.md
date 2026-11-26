@@ -3,6 +3,15 @@
 Live map:
 https://alieshaiker-svg.github.io/geog464---lab1/A3_Yousif/site/ 
 
+
+## What my map remembers
+
+I added a favourites list so parents can save as many playgrounds as they want while comparing options. This makes it easier for them to come back later and find playgrounds they were interested in without starting over.
+
+The favourites are stored personally in the reader's own browser using `localStorage`, so nobody else can see their saved playgrounds. A reader can remove a playground by opening it and pressing **Saved (remove)**, or clear the site's stored data in their browser.
+
+The feature uses `site/remember.js`. I understand that it saves each playground using its unique `ID`, then reads those saved IDs again when the page reloads so the favourites list can be rebuilt.
+
 ## A3 feature
 
 My map is designed for parents with young children who want to compare playgrounds in Montréal. The current version lets users select a borough, view playground locations, and see nearby tree-canopy coverage. For A3, the ranking panel orders playgrounds in the selected borough by `canopy_pct_250m`, from highest to lowest, and shows the canopy percentage rounded to one decimal place. Only playgrounds with numeric canopy data are ranked, and the panel shows at most the top 10.
