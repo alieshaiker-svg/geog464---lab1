@@ -5,11 +5,21 @@ const streets = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-const PLAYGROUND_TYPE = 'Aire de jeu - enfant';
 const status = document.getElementById('status');
 const boroughFilter = document.getElementById('borough-filter');
 const rankingList = document.getElementById('ranking-list');
 const rankingSummary = document.getElementById('ranking-summary');
+
+function getDisplayValue(value) {
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  const text = String(value).trim();
+  return text && text.toLowerCase() !== 'null' && text.toLowerCase() !== 'undefined'
+    ? text
+    : '';
+}
 
 function readStringProperty(properties, keys) {
   if (!properties) {
@@ -17,9 +27,9 @@ function readStringProperty(properties, keys) {
   }
 
   for (let i = 0; i < keys.length; i += 1) {
-    const value = properties[keys[i]];
-    if (value !== null && value !== undefined && value !== '') {
-      return String(value);
+    const value = getDisplayValue(properties[keys[i]]);
+    if (value) {
+      return value;
     }
   }
 
@@ -34,7 +44,7 @@ function getCanopyPercent(feature) {
 
 function getPlaygroundId(feature) {
   const properties = feature && feature.properties ? feature.properties : {};
-  return properties.ID || properties.INDEX_PARC || '';
+  return getDisplayValue(properties.ID);
 }
 
 function renderRankingList(visiblePlaygrounds, playgroundLayer, map) {
@@ -51,10 +61,12 @@ function renderRankingList(visiblePlaygrounds, playgroundLayer, map) {
       const properties = feature.properties || {};
       const canopy = getCanopyPercent(feature);
       return {
-        name: readStringProperty(properties, ['NOM', 'NAME', 'name', 'playground_name']),
+        name: readStringProperty(properties, ['public_space_name']),
+        category: [getDisplayValue(properties.NOM), getDisplayValue(properties.TYPE)]
+          .filter(Boolean)
+          .join(' / '),
         identifier: getPlaygroundId(feature),
-        canopy: canopy,
-        feature: feature
+        canopy: canopy
       };
     })
     .filter(function (playground) {
@@ -85,7 +97,7 @@ function renderRankingList(visiblePlaygrounds, playgroundLayer, map) {
     button.addEventListener('click', function () {
       let marker = null;
       playgroundLayer.eachLayer(function (layer) {
-        if (layer.feature === playground.feature) {
+        if (String(getPlaygroundId(layer.feature)) === playground.identifier) {
           marker = layer;
         }
       });
@@ -121,8 +133,19 @@ function renderRankingList(visiblePlaygrounds, playgroundLayer, map) {
 
     const name = document.createElement('strong');
     name.textContent = playground.name;
-
     button.appendChild(name);
+
+    if (playground.category) {
+      const category = document.createElement('span');
+      category.className = 'rank-identifier';
+      category.textContent = playground.category;
+      button.appendChild(category);
+    }
+
+    const meta = document.createElement('span');
+    meta.className = 'rank-meta';
+    meta.textContent = 'Tree canopy within 250 m: ' + playground.canopy.toFixed(1) + '%';
+    button.appendChild(meta);
 
     if (playground.identifier) {
       const identifier = document.createElement('span');
@@ -131,11 +154,6 @@ function renderRankingList(visiblePlaygrounds, playgroundLayer, map) {
       button.appendChild(identifier);
     }
 
-    const meta = document.createElement('span');
-    meta.className = 'rank-meta';
-    meta.textContent = 'Tree canopy within 250 m: ' + playground.canopy.toFixed(1) + '%';
-
-    button.appendChild(meta);
     item.appendChild(button);
     rankingList.appendChild(item);
   });
@@ -164,17 +182,18 @@ function colourForCanopy(value) {
 }
 
 Promise.all([
-  loadGeoJSON('../data/playgrounds_canopy.geojson'),
+  loadGeoJSON('../data/playgrounds_public_access.geojson'),
   loadGeoJSON('../data/canopy_grid.geojson')
 ])
   .then(function (datasets) {
     const playgroundData = datasets[0];
     const canopyGridData = datasets[1];
     const playgrounds = playgroundData.features.filter(function (feature) {
-      return feature.properties && feature.properties.TYPE === PLAYGROUND_TYPE;
+      return feature.properties &&
+        feature.properties.access_class === 'municipal_public_space';
     });
-    if (playgrounds.length !== 1008) {
-      throw new Error('playgrounds_canopy.geojson must contain 1,008 playgrounds');
+    if (playgrounds.length !== 918) {
+      throw new Error('playgrounds_public_access.geojson must contain exactly 918 municipal playgrounds');
     }
     const boroughs = Array.from(new Set(playgrounds.map(function (feature) {
       return feature.properties.ARROND;
@@ -224,15 +243,23 @@ Promise.all([
         const p = feature.properties;
         const canopy = getCanopyPercent(feature);
         const popup = document.createElement('div');
+        const heading = document.createElement('h3');
+        heading.textContent = readStringProperty(p, ['public_space_name']);
+        popup.appendChild(heading);
 
         [
-          ['Playground ID', getPlaygroundId(feature) || 'Not recorded'],
-          ['Borough', p.ARROND],
+          ['Age/category', p.NOM],
           ['Type', p.TYPE],
-          ['Tree canopy within 250 m', canopy === null ? 'Not recorded' : canopy.toFixed(1) + '%']
+          ['Borough', p.ARROND],
+          ['Tree canopy within 250 m', canopy === null ? '' : canopy.toFixed(1) + '%'],
+          ['Playground ID', getPlaygroundId(feature)]
         ].forEach(function (item) {
+          const value = getDisplayValue(item[1]);
+          if (!value) {
+            return;
+          }
           const line = document.createElement('div');
-          line.textContent = item[0] + ': ' + (item[1] || 'Not recorded');
+          line.textContent = item[0] + ': ' + value;
           popup.appendChild(line);
         });
 
@@ -278,6 +305,15 @@ Promise.all([
         return !selectedBorough || feature.properties.ARROND === selectedBorough;
       });
 
+      const openPopups = [];
+      map.eachLayer(function (layer) {
+        if (layer instanceof L.Popup) {
+          openPopups.push(layer);
+        }
+      });
+      openPopups.forEach(function (popup) {
+        map.closePopup(popup);
+      });
       playgroundLayer.clearLayers();
       playgroundLayer.addData(visiblePlaygrounds);
       status.textContent = selectedBorough
@@ -319,7 +355,7 @@ Promise.all([
     updateMap();
     rememberMarks(map, playgroundLayer, {
       idField: 'ID',
-      nameField: 'ID',
+      nameField: 'public_space_name',
       title: 'My playgrounds',
       onSelect: showPlayground
     });
