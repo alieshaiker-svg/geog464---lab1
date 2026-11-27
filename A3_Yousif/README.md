@@ -4,6 +4,11 @@ Live map:
 https://alieshaiker-svg.github.io/geog464---lab1/A3_Yousif/site/ 
 
 
+This week, I improved my Montréal Playgrounds project by refining which playgrounds are actually shown on the map. Instead of keeping all 1,008 playground features from the original dataset, I filtered the data to 918 playgrounds that are located within mapped Montréal municipal public-space areas. I also updated the map so these playgrounds display their public-space names, which makes the ranking, popups and favourites much easier for a parent to understand than only showing an ID. This improves the project because the information is clearer and more useful for someone who is actually trying to compare playgrounds. I checked the changes by testing the borough filter, playground counts, Top 10 canopy ranking, popups and favourites, including saving and reopening a favourite after reloading the page. I also checked the site on mobile.
+
+https://alieshaiker-svg.github.io/geog464---lab1/A3_Yousif/site/
+
+
 ## What my map remembers
 
 I added a favourites list so parents can save as many playgrounds as they want while comparing options. This makes it easier for them to come back later and find playgrounds they were interested in without starting over.
@@ -128,6 +133,7 @@ The verified output contains 1,122 grid polygons, with canopy coverage from 0% t
 A3_Yousif/
 ├── data/
 │   ├── playgrounds.geojson
+        espace_vert
 │   ├── playgrounds_canopy.geojson
 │   ├── canopy_grid.geojson
 │   ├── playground_grid.geojson
@@ -143,6 +149,7 @@ A3_Yousif/
 │   ├── app.js
 │   ├── index.html
 │   └── style.css
+ process_public_access
 └── README.md
 ```
 
